@@ -87,71 +87,65 @@ The project demonstrates a complete **End-to-End DevOps pipeline** — from writ
 | CI/CD | GitHub Actions | Automated pipeline |
 | Security | Trivy | Docker image CVE scanning |
 | Monitoring | Prometheus + Grafana | Metrics and dashboards |
-| Proxy | Nginx | Reverse proxy (optional) |
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
-Developer (local)
-│
-│  git push
-▼
-GitHub
-│
-│  triggers
-▼
-GitHub Actions Pipeline
-├── 1. Build & test
-├── 2. Trivy security scan
-├── 3. Docker build + push → Docker Hub
-└── 4. SSH deploy → AWS EC2
-│
-┌─────┴──────┐
-│   AWS EC2  │
-│            │
-│ ┌────────┐ │
-│ │frontend│ │ :80
-│ └────────┘ │
-│ ┌────────┐ │
-│ │backend │ │ :5000
-│ └────────┘ │
-│ ┌────────┐ │
-│ │grafana │ │ :3001
-│ └────────┘ │
-│ ┌────────┐ │
-│ │promet. │ │ :9090
-│ └────────┘ │
-└────────────┘
-│
-Supabase Cloud (PostgreSQL DB)
+The app follows a microservices architecture with the following flow:
+
+- **Developer** pushes code to GitHub
+- **GitHub Actions** triggers the CI/CD pipeline automatically
+- Pipeline builds Docker images and pushes to a private **Docker Hub** registry
+- Pipeline SSHs into **AWS EC2** and deploys the latest containers
+- **Supabase** (PostgreSQL) handles database and authentication in the cloud
+- **Prometheus + Grafana** monitor all running containers
+
+```
+Developer → GitHub → GitHub Actions → Docker Hub
+                                           │
+                                      AWS EC2
+                                    ┌────────────┐
+                                    │ frontend:80│
+                                    │ backend    │
+                                    │ grafana    │
+                                    │ prometheus │
+                                    └─────┬──────┘
+                                          │
+                                    Supabase Cloud
+                                    (PostgreSQL DB)
+```
+
 ---
 
 ## ⚙️ CI/CD Pipeline
 
 The pipeline is defined in `.github/workflows/deploy.yml` and runs automatically on every push to `main`.
+
+```
 Push to main
-│
-▼
-┌─────────────────────────────────────┐
-│         Build & Push Images         │
-│  1. Login to Docker Hub             │
-│  2. Build backend image             │
-│  3. Build frontend image            │
-│     (inject Supabase env vars)      │
-│  4. Push both images to Docker Hub  │
-└─────────────────┬───────────────────┘
-│
-▼
-┌─────────────────────────────────────┐
-│           Deploy to EC2             │
-│  1. SCP docker-compose.yml to EC2   │
-│  2. SSH into EC2                    │
-│  3. docker pull latest images       │
-│  4. docker stop old containers      │
-│  5. docker-compose up -d            │
-│  6. docker image prune              │
-└─────────────────────────────────────┘
+     │
+     ▼
+┌──────────────────────────────────────┐
+│          Build & Push Images         │
+│  1. Login to Docker Hub              │
+│  2. Build backend image              │
+│  3. Build frontend image             │
+│     (inject Supabase env vars)       │
+│  4. Push both images to Docker Hub   │
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│            Deploy to EC2             │
+│  1. SCP docker-compose.yml to EC2    │
+│  2. SSH into EC2                     │
+│  3. docker pull latest images        │
+│  4. docker stop old containers       │
+│  5. docker-compose up -d             │
+│  6. docker image prune               │
+└──────────────────────────────────────┘
+```
 
 ### GitHub Secrets Required
 
@@ -167,6 +161,8 @@ Push to main
 ---
 
 ## 📁 Project Structure
+
+```
 expense-tracker/
 ├── .github/
 │   └── workflows/
@@ -193,6 +189,8 @@ expense-tracker/
 │   └── nginx.conf              # Reverse proxy config
 ├── docker-compose.yml          # Multi-container setup
 └── README.md
+```
+
 ---
 
 ## 🚀 Local Development Setup
@@ -321,7 +319,6 @@ docker build \
 ### Server Setup
 
 ```bash
-# Update and install Docker
 sudo apt update -y
 sudo apt install -y docker.io docker-compose
 sudo systemctl start docker
@@ -333,8 +330,8 @@ sudo usermod -aG docker ubuntu
 
 ```bash
 # Pull latest images
-docker pull zishann555/expense-frontend:latest
-docker pull zishann555/expense-backend:latest
+docker pull your-dockerhub-username/expense-frontend:latest
+docker pull your-dockerhub-username/expense-backend:latest
 
 # Start containers
 docker-compose up -d
