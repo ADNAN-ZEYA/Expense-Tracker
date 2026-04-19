@@ -2,14 +2,12 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    image: zishann555/expense-backend:latest
     container_name: backend
     restart: unless-stopped
-    volumes:
-      - ./backend/transactions.json:/app/transactions.json
 
   frontend:
-    build: ./frontend
+    image: zishann555/expense-frontend:latest
     container_name: frontend
     ports:
       - "80:80"
