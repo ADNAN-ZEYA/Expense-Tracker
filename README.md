@@ -91,7 +91,8 @@ The project demonstrates a complete **End-to-End DevOps pipeline** — from writ
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
+
 Developer (local)
 │
 │  git push
@@ -123,9 +124,7 @@ GitHub Actions Pipeline
 │ └────────┘ │
 └────────────┘
 │
-Supabase Cloud
-(PostgreSQL DB)
-
+Supabase Cloud (PostgreSQL DB)
 ---
 
 ## ⚙️ CI/CD Pipeline
