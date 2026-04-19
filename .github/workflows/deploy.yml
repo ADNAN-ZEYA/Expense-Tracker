@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm test
+        run: npx jest --forceExit
 
   security-scan:
     name: Trivy security scan
@@ -63,8 +63,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/myapp:${{ github.sha }}
+            zishann555/myapp:latest
+            zishann555/myapp:${{ github.sha }}
 
   deploy:
     name: Deploy to EC2
