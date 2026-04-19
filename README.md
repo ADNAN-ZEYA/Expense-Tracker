@@ -1,4 +1,4 @@
-# 💰 FinTrack — Personal Finance Manager
+# FinTrack — Personal Finance Manager
 
 > A full-stack personal finance web application with automated CI/CD deployment on AWS EC2.
 
@@ -29,7 +29,7 @@ The project demonstrates a complete **End-to-End DevOps pipeline** — from writ
 
 ---
 
-## ✨ Features
+##  Features
 
 ### 🔐 Authentication
 - Email + password registration and login
@@ -71,7 +71,7 @@ The project demonstrates a complete **End-to-End DevOps pipeline** — from writ
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |---|---|---|
@@ -90,7 +90,7 @@ The project demonstrates a complete **End-to-End DevOps pipeline** — from writ
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 The app follows a microservices architecture with the following flow:
 
@@ -193,7 +193,7 @@ expense-tracker/
 
 ---
 
-## 🚀 Local Development Setup
+## Local Development Setup
 
 ### Prerequisites
 - Node.js 18+
