@@ -26,6 +26,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
   const [type, setType] = useState('income')
   const [category, setCategory] = useState('Salary')
   const [month, setMonth] = useState(currentMonth)
+  const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0])
   const [filterMonth, setFilterMonth] = useState(currentMonth)
   const [filterCategory, setFilterCategory] = useState('All')
   const [search, setSearch] = useState('') 
@@ -97,7 +98,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
     await supabase.from('transactions').insert({
       user_id: user.id, description,
       amount: parseFloat(amount), type, category, month,
-      date: new Date().toLocaleDateString('en-IN')
+      date: new Date(customDate).toLocaleDateString('en-IN')
     })
     setDescription(''); setAmount('')
     await fetchTransactions()
@@ -331,8 +332,15 @@ export default function Dashboard({ session, theme, toggleTheme }) {
                   <div>
                     <div style={fldLabel}>Month</div>
                     <select style={inpStyle} value={month} onChange={e => setMonth(e.target.value)}>
-                      {MONTHS.map(m => <option key={m}>{m}</option>)}
-                    </select>
+                     {MONTHS.map(m => <option key={m}>{m}</option>)}
+                   </select>
+                   <div style={fldLabel}>Date</div>
+                   <input
+                    style={inpStyle}
+                    type="date"
+                    value={customDate}
+                    onChange={e => setCustomDate(e.target.value)}
+                    />
                   </div>
                 </div>
                 <div style={fldLabel}>Type</div>
