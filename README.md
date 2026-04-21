@@ -405,7 +405,3 @@ Login: `admin` / `admin123`
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
-
----
-
-> Built as an End-to-End DevOps project demonstrating CI/CD automation, containerization, cloud deployment, and full-stack development.
