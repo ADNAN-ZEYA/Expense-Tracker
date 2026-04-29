@@ -36,11 +36,27 @@ export default function App({ Component, pageProps }) {
   )
 
   return (
-    <Component
-      {...pageProps}
-      session={session}
-      theme={theme}
-      toggleTheme={toggleTheme}
-    />
-  )
+  <>
+    <style>{`
+      @media (max-width: 768px) {
+        .sidebar { display: none !important; }
+        .main-content { flex: 1; }
+        .summary-cards { grid-template-columns: repeat(2, 1fr) !important; }
+        .dashboard-charts { grid-template-columns: 1fr !important; }
+        .transactions-grid { grid-template-columns: 1fr !important; }
+        .budget-grid { grid-template-columns: 1fr !important; }
+        .topbar { padding: 0.75rem 1rem !important; }
+        .main-padding { padding: 1rem !important; }
+      }
+      @media (max-width: 480px) {
+        .summary-cards { grid-template-columns: 1fr !important; }
+      }
+      @media (max-width: 768px) {
+  .mobile-nav { display: flex !important; }
+}
+    `}</style>
+    <Component {...pageProps} session={session} theme={theme} toggleTheme={toggleTheme} />
+  </>
+
+)
 }

@@ -13,6 +13,8 @@ const CATEGORIES = ['Salary', 'Food', 'Rent', 'Transport', 'Entertainment', 'Hea
 const EXPENSE_CATS = CATEGORIES.filter(c => c !== 'Salary')
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const currentMonth = MONTHS[new Date().getMonth()]
+const INDIGO_LIGHT = '#818cf8'
+const SLATE = '#334155'
 
 export default function Dashboard({ session, theme, toggleTheme }) {
   const router = useRouter()
@@ -29,7 +31,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
   const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0])
   const [filterMonth, setFilterMonth] = useState(currentMonth)
   const [filterCategory, setFilterCategory] = useState('All')
-  const [search, setSearch] = useState('') 
+  const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [showEditProfile, setShowEditProfile] = useState(false)
@@ -41,7 +43,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
   const userName = user.user_metadata?.full_name || user.email.split('@')[0]
 
   const bg = isDark ? '#0a0f1e' : '#f1f5f9'
-  const sidebarBg = isDark ? '#0f172a' : '#0f172a'
+  const sidebarBg = '#0f172a'
   const cardBg = isDark ? '#111827' : '#ffffff'
   const topbarBg = isDark ? '#111827' : '#ffffff'
   const border = isDark ? '#1f2937' : '#e2e8f0'
@@ -132,9 +134,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
   const daysLeft = daysInMonth - today.getDate() + 1
   const dailyLimit = balance > 0 ? Math.round(balance / daysLeft) : 0
-
   const recentTx = transactions.slice(0, 3)
-
   const todayStr = new Date().toLocaleDateString('en-IN')
   const todayExpense = transactions.filter(t => t.date === todayStr && t.type === 'expense').reduce((s, t) => s + t.amount, 0)
 
@@ -163,14 +163,13 @@ export default function Dashboard({ session, theme, toggleTheme }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: bg }}>
 
-      {/* Sidebar */}
-      <div style={{ width: '260px', background: sidebarBg, color: '#e2e8f0', display: 'flex', flexDirection: 'column', padding: '1.5rem 1rem', flexShrink: 0 }}>
+      {/* Sidebar — hidden on mobile via CSS */}
+      <div className="sidebar" style={{ width: '260px', background: sidebarBg, color: '#e2e8f0', display: 'flex', flexDirection: 'column', padding: '1.5rem 1rem', flexShrink: 0 }}>
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#fff', letterSpacing: '-1px' }}>💰 FinTrack</div>
           <div style={{ fontSize: '0.72rem', color: '#475569', marginTop: '0.2rem' }}>Personal Finance Manager</div>
         </div>
 
-        {/* Daily Limit Card */}
         <div style={{ background: '#1e293b', borderRadius: '10px', padding: '1rem', marginBottom: '1.5rem', border: '1px solid #334155' }}>
           <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.4rem' }}>Daily Spending Limit</div>
           <div style={{ fontSize: '1.4rem', fontWeight: '800', color: dailyLimit > 0 ? '#4ade80' : '#f87171' }}>₹{dailyLimit.toLocaleString('en-IN')}</div>
@@ -178,10 +177,9 @@ export default function Dashboard({ session, theme, toggleTheme }) {
           <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '0.5rem' }}>Today spent: <span style={{ color: '#f87171' }}>₹{todayExpense.toLocaleString('en-IN')}</span></div>
         </div>
 
-        {/* Navigation */}
         <div style={{ fontSize: '0.65rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Menu</div>
         {navItems.map(item => (
-          <div key={item.id} className="nav-item" onClick={() => setActiveTab(item.id)} style={{
+          <div key={item.id} onClick={() => setActiveTab(item.id)} style={{
             display: 'flex', alignItems: 'center', gap: '0.75rem',
             padding: '0.7rem 0.9rem', borderRadius: '8px', marginBottom: '0.25rem',
             cursor: 'pointer', fontSize: '0.88rem', fontWeight: '500',
@@ -193,13 +191,12 @@ export default function Dashboard({ session, theme, toggleTheme }) {
           </div>
         ))}
 
-        {/* Recent Transactions */}
         <div style={{ marginTop: '1.5rem' }}>
           <div style={{ fontSize: '0.65rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.6rem', paddingLeft: '0.5rem' }}>Recent</div>
           {recentTx.length === 0
             ? <div style={{ fontSize: '0.78rem', color: '#475569', paddingLeft: '0.5rem' }}>No transactions yet</div>
             : recentTx.map(t => (
-              <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0.5rem', borderRadius: '6px', marginBottom: '0.25rem', background: '#1e293b' }}>
+              <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', borderRadius: '6px', marginBottom: '0.25rem', background: '#1e293b' }}>
                 <div>
                   <div style={{ fontSize: '0.78rem', color: '#e2e8f0', fontWeight: '500' }}>{t.description.length > 12 ? t.description.substring(0, 12) + '...' : t.description}</div>
                   <div style={{ fontSize: '0.65rem', color: '#475569' }}>{t.category}</div>
@@ -212,7 +209,6 @@ export default function Dashboard({ session, theme, toggleTheme }) {
           }
         </div>
 
-        {/* Bottom: Profile */}
         <div style={{ marginTop: 'auto' }}>
           <div style={{ background: '#1e293b', borderRadius: '10px', padding: '0.9rem', marginBottom: '0.75rem', border: '1px solid #334155' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
@@ -224,25 +220,17 @@ export default function Dashboard({ session, theme, toggleTheme }) {
                 <div style={{ fontSize: '0.68rem', color: '#475569', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
               </div>
             </div>
-            <button onClick={() => { setShowEditProfile(true); setNewName(userName) }} style={{
-              width: '100%', padding: '0.5rem', background: 'transparent',
-              border: '1px solid #334155', borderRadius: '6px', color: '#94a3b8',
-              cursor: 'pointer', fontSize: '0.78rem', fontWeight: '500', marginBottom: '0.5rem'
-            }}>Edit Profile</button>
-            <button onClick={handleLogout} style={{
-              width: '100%', padding: '0.5rem', background: 'transparent',
-              border: '1px solid #7f1d1d', borderRadius: '6px', color: '#f87171',
-              cursor: 'pointer', fontSize: '0.78rem', fontWeight: '500'
-            }}>Sign Out</button>
+            <button onClick={() => { setShowEditProfile(true); setNewName(userName) }} style={{ width: '100%', padding: '0.5rem', background: 'transparent', border: '1px solid #334155', borderRadius: '6px', color: '#94a3b8', cursor: 'pointer', fontSize: '0.78rem', fontWeight: '500', marginBottom: '0.5rem' }}>Edit Profile</button>
+            <button onClick={handleLogout} style={{ width: '100%', padding: '0.5rem', background: 'transparent', border: '1px solid #7f1d1d', borderRadius: '6px', color: '#f87171', cursor: 'pointer', fontSize: '0.78rem', fontWeight: '500' }}>Sign Out</button>
           </div>
         </div>
       </div>
 
-      {/* Main */}
-      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      {/* Main Content */}
+      <div className="main-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
 
         {/* Topbar */}
-        <div style={{ background: topbarBg, borderBottom: `1px solid ${border}`, padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
+        <div className="topbar" style={{ background: topbarBg, borderBottom: `1px solid ${border}`, padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
           <div>
             <div style={{ fontSize: '1.1rem', fontWeight: '700', color: text }}>
               {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'transactions' ? 'Transactions' : 'Budget Planner'}
@@ -251,39 +239,35 @@ export default function Dashboard({ session, theme, toggleTheme }) {
               {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} style={{ padding: '0.5rem 0.9rem', border: `1px solid ${border}`, borderRadius: '8px', background: cardBg, color: text, fontSize: '0.85rem', cursor: 'pointer' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} style={{ padding: '0.5rem 0.6rem', border: `1px solid ${border}`, borderRadius: '8px', background: cardBg, color: text, fontSize: '0.85rem', cursor: 'pointer' }}>
               {MONTHS.map(m => <option key={m}>{m}</option>)}
             </select>
-            <button onClick={toggleTheme} style={{
-              padding: '0.5rem 1rem', border: `1px solid ${border}`, borderRadius: '8px',
-              background: cardBg, color: text, cursor: 'pointer', fontSize: '0.85rem',
-              fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.4rem'
-            }}>
-              {isDark ? '☀ Light' : '🌙 Dark'}
+            <button onClick={toggleTheme} style={{ padding: '0.5rem 0.8rem', border: `1px solid ${border}`, borderRadius: '8px', background: cardBg, color: text, cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600' }}>
+              {isDark ? '☀' : '🌙'}
             </button>
           </div>
         </div>
 
-        <div style={{ padding: '1.5rem 2rem', flex: 1 }}>
+        <div className="main-padding" style={{ padding: '1.5rem 2rem', flex: 1, paddingBottom: '5rem' }}>
 
           {/* Summary Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="summary-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
             {[
               { label: 'Net Balance', value: `₹${balance.toLocaleString('en-IN')}`, sub: balance >= 0 ? 'Positive balance' : 'Overspent', color: balance >= 0 ? '#16a34a' : '#dc2626', dot: balance >= 0 ? '#22c55e' : '#ef4444' },
               { label: 'Total Income', value: `₹${totalIncome.toLocaleString('en-IN')}`, sub: `${monthTx.filter(t => t.type === 'income').length} transactions`, color: '#16a34a', dot: '#22c55e' },
               { label: 'Total Expense', value: `₹${totalExpense.toLocaleString('en-IN')}`, sub: `${monthTx.filter(t => t.type === 'expense').length} transactions`, color: '#dc2626', dot: '#ef4444' },
               { label: 'Budget Used', value: `${budgetUsedPct}%`, sub: `of ₹${userTotalBudget.toLocaleString('en-IN')} budget`, color: budgetUsedPct > 80 ? '#dc2626' : '#6366f1', dot: budgetUsedPct > 80 ? '#ef4444' : '#6366f1' },
             ].map(c => (
-              <div key={c.label} style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '12px', padding: '1.25rem 1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                  <div style={{ fontSize: '0.72rem', color: muted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{c.label}</div>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.dot, marginTop: '3px' }} />
+              <div key={c.label} style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '12px', padding: '1rem 1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.68rem', color: muted, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{c.label}</div>
+                  <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: c.dot, marginTop: '3px' }} />
                 </div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '800', color: c.color, letterSpacing: '-0.5px' }}>{c.value}</div>
-                <div style={{ fontSize: '0.72rem', color: muted, marginTop: '0.3rem' }}>{c.sub}</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: '800', color: c.color, letterSpacing: '-0.5px' }}>{c.value}</div>
+                <div style={{ fontSize: '0.68rem', color: muted, marginTop: '0.2rem' }}>{c.sub}</div>
                 {c.label === 'Budget Used' && (
-                  <div style={{ height: '3px', background: isDark ? '#1f2937' : '#f1f5f9', borderRadius: '2px', marginTop: '0.75rem' }}>
+                  <div style={{ height: '3px', background: isDark ? '#1f2937' : '#f1f5f9', borderRadius: '2px', marginTop: '0.6rem' }}>
                     <div style={{ height: '100%', width: `${Math.min(budgetUsedPct, 100)}%`, background: budgetUsedPct > 80 ? '#ef4444' : '#6366f1', borderRadius: '2px' }} />
                   </div>
                 )}
@@ -293,7 +277,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
 
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="dashboard-charts" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div style={cardStyle}>
                 <div style={secTitle}>Income vs Expense</div>
                 <div style={{ maxWidth: '260px', margin: '0 auto' }}>
@@ -315,7 +299,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
 
           {/* Transactions Tab */}
           {activeTab === 'transactions' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1.5rem' }}>
+            <div className="transactions-grid" style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1.5rem' }}>
               <div style={cardStyle}>
                 <div style={secTitle}>Add Transaction</div>
                 <div style={fldLabel}>Description</div>
@@ -325,22 +309,17 @@ export default function Dashboard({ session, theme, toggleTheme }) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
                   <div>
                     <div style={fldLabel}>Category</div>
-                    <select style={inpStyle} value={category} onChange={e => setCategory(e.target.value)}>
+                    <select style={{ ...inpStyle, marginBottom: 0 }} value={category} onChange={e => setCategory(e.target.value)}>
                       {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
                     <div style={fldLabel}>Month</div>
-                    <select style={inpStyle} value={month} onChange={e => setMonth(e.target.value)}>
-                     {MONTHS.map(m => <option key={m}>{m}</option>)}
-                   </select>
-                   <div style={fldLabel}>Date</div>
-                   <input
-                    style={inpStyle}
-                    type="date"
-                    value={customDate}
-                    onChange={e => setCustomDate(e.target.value)}
-                    />
+                    <select style={{ ...inpStyle, marginBottom: '0.5rem' }} value={month} onChange={e => setMonth(e.target.value)}>
+                      {MONTHS.map(m => <option key={m}>{m}</option>)}
+                    </select>
+                    <div style={fldLabel}>Date</div>
+                    <input style={{ ...inpStyle, marginBottom: 0 }} type="date" value={customDate} onChange={e => setCustomDate(e.target.value)} />
                   </div>
                 </div>
                 <div style={fldLabel}>Type</div>
@@ -398,7 +377,7 @@ export default function Dashboard({ session, theme, toggleTheme }) {
 
           {/* Budget Tab */}
           {activeTab === 'budget' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1.5rem' }}>
+            <div className="budget-grid" style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1.5rem' }}>
               <div style={cardStyle}>
                 <div style={secTitle}>Set Budget — {filterMonth}</div>
                 <div style={fldLabel}>Total Monthly Budget (₹)</div>
@@ -463,9 +442,28 @@ export default function Dashboard({ session, theme, toggleTheme }) {
         </div>
       </div>
 
+      {/* Mobile Bottom Nav — shown only on mobile via CSS */}
+      <div className="mobile-nav" style={{
+        display: 'none',
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: sidebarBg, borderTop: `1px solid ${SLATE}`,
+        padding: '0.5rem 0', zIndex: 50
+      }}>
+        {navItems.map(item => (
+          <div key={item.id} onClick={() => setActiveTab(item.id)} style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: '0.2rem', padding: '0.3rem 0', cursor: 'pointer', flex: 1,
+            color: activeTab === item.id ? INDIGO_LIGHT : '#64748b', fontSize: '0.7rem'
+          }}>
+            <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
+            {item.label}
+          </div>
+        ))}
+      </div>
+
       {/* Edit Profile Modal */}
       {showEditProfile && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
           <div style={{ background: cardBg, borderRadius: '16px', padding: '2rem', width: '100%', maxWidth: '380px', border: `1px solid ${border}` }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: text, marginBottom: '1.25rem' }}>Edit Profile</h3>
             <div style={fldLabel}>Full Name</div>
